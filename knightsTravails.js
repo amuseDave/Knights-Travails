@@ -1,17 +1,3 @@
-const MAX_BOARD = 7;
-const MIN_BOARD = 0;
-
-const POSSIBLE_MOVES = [
-  { x: -2, y: 1 },
-  { x: -1, y: 2 },
-  { x: 2, y: 1 },
-  { x: 1, y: 2 },
-  { x: -2, y: -1 },
-  { x: -1, y: -2 },
-  { x: 2, y: -1 },
-  { x: 1, y: -2 },
-];
-
 class Queue {
   constructor() {
     this.queue = null;
@@ -29,7 +15,7 @@ class Queue {
   }
 
   dequeue() {
-    if (!this.queue) return 'Nothing to queue!';
+    if (!this.queue) return null;
     const { data } = this.queue;
     this.queue = this.queue.next;
     if (!this.queue) this.endLine = null;
@@ -37,35 +23,49 @@ class Queue {
   }
 }
 
+const MAX_BOARD = 8;
+const MIN_BOARD = 1;
+
+const POSSIBLE_MOVES = [
+  { x: -2, y: 1 },
+  { x: -1, y: 2 },
+  { x: 2, y: 1 },
+  { x: 1, y: 2 },
+  { x: -2, y: -1 },
+  { x: -1, y: -2 },
+  { x: 2, y: -1 },
+  { x: 1, y: -2 },
+];
 
 function isPositionValid(x, y) {
   return x >= MIN_BOARD && y <= MAX_BOARD && x <= MAX_BOARD && y >= MIN_BOARD;
 }
 
 function knightsMove(startPos, endPos) {
-  const [xS, yS] = startPos;
-  const [xE, yE] = endPos;
+  if (!Array.isArray(startPos) || !Array.isArray(endPos)) return 'Invalid arguments';
+
+  const [xS, yS, xE, yE] = [...startPos, ...endPos].map((pos) => Math.floor(pos));
+
   if (!isPositionValid(xS, yS) || !isPositionValid(xE, yE)) return 'Invalid Position';
 
-  let shortestPath = { totalMoves: Infinity, moves: [] };
+  let shortestPath = { totalMoves: null, moves: [] };
 
   const queue = new Queue();
   queue.enqueue({
     totalMoves: 0,
     moves: [{ x: xS, y: yS }],
   });
+  const visited = new Set([`${xS},${yS}`]);
 
   while (queue.queue) {
     const { totalMoves, moves } = queue.dequeue();
     const curMove = moves[moves.length - 1];
 
-    // If current move has higher totalMoves than assigned shorterPath
-    if (totalMoves > shortestPath.totalMoves) continue;
     // Handle shortest path assignment
     if (curMove.x === xE && curMove.y === yE) {
       shortestPath.totalMoves = totalMoves;
       shortestPath.moves = moves.map((val) => `[${val.x}, ${val.y}]`);
-      continue;
+      break;
     }
 
     possibleMove: for (let i = 0; i < POSSIBLE_MOVES.length; i++) {
@@ -75,9 +75,8 @@ function knightsMove(startPos, endPos) {
 
       if (!isPositionValid(newX, newY)) continue;
 
-      for (let j = 0; j < moves.length; j++) {
-        if (moves[j].x === newX && moves[j].y === newY) continue possibleMove;
-      }
+      if (visited.has(`${newX},${newY}`)) continue possibleMove;
+      visited.add(`${newX},${newY}`);
 
       queue.enqueue({
         totalMoves: totalMoves + 1,
@@ -91,4 +90,5 @@ function knightsMove(startPos, endPos) {
   `;
 }
 
-console.log(knightsMove([3, 3], [4, 3]));
+const result = knightsMove([3, 3], [3, 4]);
+console.log(result);
