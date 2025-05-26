@@ -51,11 +51,11 @@ function knightsMove(startPos, endPos) {
   let shortestPath = { totalMoves: null, moves: [] };
 
   const queue = new Queue();
+  const visited = new Set([`${xS},${yS}`]);
   queue.enqueue({
     totalMoves: 0,
     moves: [{ x: xS, y: yS }],
   });
-  const visited = new Set([`${xS},${yS}`]);
 
   while (queue.queue) {
     const { totalMoves, moves } = queue.dequeue();
@@ -68,14 +68,13 @@ function knightsMove(startPos, endPos) {
       break;
     }
 
-    possibleMove: for (let i = 0; i < POSSIBLE_MOVES.length; i++) {
+    for (let i = 0; i < POSSIBLE_MOVES.length; i++) {
       const { x, y } = POSSIBLE_MOVES[i];
       const newX = curMove.x + x;
       const newY = curMove.y + y;
 
-      if (!isPositionValid(newX, newY)) continue;
+      if (!isPositionValid(newX, newY) || visited.has(`${newX},${newY}`)) continue;
 
-      if (visited.has(`${newX},${newY}`)) continue possibleMove;
       visited.add(`${newX},${newY}`);
 
       queue.enqueue({
