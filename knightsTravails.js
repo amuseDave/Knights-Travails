@@ -54,10 +54,9 @@ function knightsMove(startPos, endPos) {
   if (!isPositionValid(xS, yS) || !isPositionValid(xE, yE)) return 'Invalid Position';
 
   if (xS === xE && yS === yE) {
+    // Return early to save memory
     return `You made it in 0 moves! Here's your path: [${xS},${yS}]`;
   }
-
-  let shortestPath = { totalMoves: 0, moves: [] };
 
   const queue = new Queue();
   const visited = new Set([`${xS},${yS}`]);
@@ -70,11 +69,10 @@ function knightsMove(startPos, endPos) {
     const { totalMoves, moves } = queue.dequeue();
     const curMove = moves[moves.length - 1];
 
-    // Handle shortest path assignment
+    // Return shortest path
     if (curMove.x === xE && curMove.y === yE) {
-      shortestPath.totalMoves = totalMoves;
-      shortestPath.moves = moves.map((val) => `[${val.x}, ${val.y}]`);
-      break;
+      return `You made it in ${totalMoves} moves!  Here's your path: 
+      ${moves.map((val) => `[${val.x}, ${val.y}]`).join(' -> ')}`;
     }
 
     for (let i = 0; i < POSSIBLE_MOVES.length; i++) {
@@ -92,10 +90,6 @@ function knightsMove(startPos, endPos) {
       });
     }
   }
-
-  return `You made it in ${shortestPath.totalMoves} moves!  Here's your path:
-  ${shortestPath.moves.join(' -> ')}
-  `;
 }
 
 const result = knightsMove([3, 3], [3, 4]);
