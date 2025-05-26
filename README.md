@@ -1,4 +1,4 @@
-# Knights-Travails
+# Project: Knights-Travails (THE ODIN PROJECT)
 
 A JavaScript implementation to find the shortest path for a knight's movement on an 8x8 chessboard from a starting position to an ending position using a queue-based approach.
 
