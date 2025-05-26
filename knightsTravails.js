@@ -23,8 +23,8 @@ class Queue {
   }
 }
 
-const MAX_BOARD = 8;
-const MIN_BOARD = 1;
+const MAX_BOARD = 7;
+const MIN_BOARD = 0;
 
 const POSSIBLE_MOVES = [
   { x: -2, y: 1 },
@@ -38,17 +38,26 @@ const POSSIBLE_MOVES = [
 ];
 
 function isPositionValid(x, y) {
-  return x >= MIN_BOARD && y <= MAX_BOARD && x <= MAX_BOARD && y >= MIN_BOARD;
+  return x >= MIN_BOARD && x <= MAX_BOARD && y >= MIN_BOARD && y <= MAX_BOARD;
 }
 
 function knightsMove(startPos, endPos) {
-  if (!Array.isArray(startPos) || !Array.isArray(endPos)) return 'Invalid arguments';
+  if (
+    !Array.isArray(startPos) ||
+    !Array.isArray(endPos) ||
+    startPos.length !== 2 ||
+    endPos.length !== 2
+  )
+    return 'Invalid arguments';
 
   const [xS, yS, xE, yE] = [...startPos, ...endPos].map((pos) => Math.floor(pos));
-
   if (!isPositionValid(xS, yS) || !isPositionValid(xE, yE)) return 'Invalid Position';
 
-  let shortestPath = { totalMoves: null, moves: [] };
+  if (xS === xE && yS === yE) {
+    return `You made it in 0 moves! Here's your path: [${xS},${yS}]`;
+  }
+
+  let shortestPath = { totalMoves: 0, moves: [] };
 
   const queue = new Queue();
   const visited = new Set([`${xS},${yS}`]);
@@ -85,7 +94,7 @@ function knightsMove(startPos, endPos) {
   }
 
   return `You made it in ${shortestPath.totalMoves} moves!  Here's your path:
-  ${shortestPath.moves.join(' | ')}
+  ${shortestPath.moves.join(' -> ')}
   `;
 }
 
